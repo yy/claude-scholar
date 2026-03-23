@@ -23,17 +23,17 @@ Academic research tools for [Claude Code](https://claude.ai/code). Literature se
 /reload-plugins
 ```
 
-Skills are invoked as slash commands with the `claude-scholar:` prefix:
+Skills are invoked as slash commands:
 
 ```
-/claude-scholar:arxiv-metadata 2301.10140
-/claude-scholar:doi-bibtex
-/claude-scholar:check-refs
-/claude-scholar:latex-cleanup
-/claude-scholar:presubmit-checks
-/claude-scholar:math
-/claude-scholar:openalex
-/claude-scholar:arxiv-prep
+/arxiv-metadata 2301.10140
+/doi-bibtex 10.1038/nature12373
+/check-refs
+/latex-cleanup
+/presubmit-checks
+/math
+/openalex
+/arxiv-prep
 ```
 
 ## Dependencies
