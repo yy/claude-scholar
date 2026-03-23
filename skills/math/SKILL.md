@@ -1,6 +1,5 @@
 ---
-name: math
-user_invocable: true
+name: verify-math
 description: Verify mathematical derivations step-by-step using SymPy
 version: 1.0.0
 ---

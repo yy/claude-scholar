@@ -11,7 +11,7 @@ Academic research tools for [Claude Code](https://claude.ai/code). Literature se
 | `check-refs` | Verify citation references in LaTeX papers against academic databases using [bibsleuth](https://github.com/yy/bibsleuth) |
 | `doi-bibtex` | Fetch BibTeX entries from DOIs and add to `.bib` files |
 | `latex-cleanup` | Review LaTeX documents for common issues, style consistency, typography, cross-references, and draft artifacts |
-| `math` | Verify mathematical derivations step-by-step using SymPy |
+| `verify-math` | Verify mathematical derivations step-by-step using SymPy |
 | `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, and front matter |
 
@@ -31,7 +31,7 @@ Skills are invoked as slash commands:
 /check-refs
 /latex-cleanup
 /presubmit-checks
-/math
+/verify-math
 /openalex
 /arxiv-prep
 ```
@@ -41,7 +41,7 @@ Skills are invoked as slash commands:
 Some skills require external tools:
 
 - **check-refs**: [bibsleuth](https://github.com/yy/bibsleuth) (`uvx bibsleuth`)
-- **math**: [SymPy](https://www.sympy.org) (`uv run` with sympy available)
+- **verify-math**: [SymPy](https://www.sympy.org) (`uv run` with sympy available)
 - **arxiv-prep**: [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) (`uvx arxiv-latex-cleaner`)
 - **openalex**: Python with `requests` (included in the plugin's helper scripts)
 - **arxiv-metadata**: Python with `requests` (`uv run` with inline script dependencies)
