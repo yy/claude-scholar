@@ -19,7 +19,7 @@
         "./skills/check-refs",
         "./skills/doi-bibtex",
         "./skills/latex-cleanup",
-        "./skills/math",
+        "./skills/verify-math",
         "./skills/openalex",
         "./skills/presubmit-checks"
       ]
