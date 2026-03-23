@@ -1,5 +1,6 @@
 ---
 name: arxiv-prep
+user_invocable: true
 description: Prepare an arXiv submission package from a LaTeX paper. Cleans the source, builds a tarball, and extracts metadata for the submission form. Use before uploading to arXiv.
 ---
 

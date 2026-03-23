@@ -19,18 +19,21 @@ Academic research tools for [Claude Code](https://claude.ai/code). Literature se
 
 ```
 /plugin marketplace add yy/claude-scholar
-/plugin install claude-scholar
+/plugin install claude-scholar@yy-claude-scholar
+/reload-plugins
 ```
 
-Skills are namespaced under `scholar`:
+Skills are invoked as slash commands with the `claude-scholar:` prefix:
 
 ```
-/scholar:arxiv-metadata 2301.10140
-/scholar:doi-bibtex
-/scholar:check-refs
-/scholar:latex-cleanup
-/scholar:presubmit-checks
-/scholar:math
+/claude-scholar:arxiv-metadata 2301.10140
+/claude-scholar:doi-bibtex
+/claude-scholar:check-refs
+/claude-scholar:latex-cleanup
+/claude-scholar:presubmit-checks
+/claude-scholar:math
+/claude-scholar:openalex
+/claude-scholar:arxiv-prep
 ```
 
 ## Dependencies
