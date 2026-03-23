@@ -2,6 +2,8 @@
 
 Academic research tools for [Claude Code](https://claude.ai/code). Literature search, citation management, LaTeX checks, math verification, and submission preparation. These tools assist with formatting and verification—they do not generate original research content. Please check your venue's AI use policy for guidance on whether and how to use these tools.
 
+> **Note**: These skills are early-stage and not comprehensively tested. Always review the output before relying on it.
+
 ## Skills
 
 | Skill | Description |
