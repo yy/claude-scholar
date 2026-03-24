@@ -52,6 +52,7 @@ Some skills require external tools:
 
 - [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills) — inspiration and starting point for the OpenAlex skill
 - [Sadamori Kojaku](https://github.com/skojaku) — inspiration for the math verification skill
+- [Trevor Campbell's arXiv checklist](https://trevorcampbell.me/html/arxiv.html) — inspiration for the arXiv prep skill
 
 ## License
 
