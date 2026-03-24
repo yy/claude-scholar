@@ -9,7 +9,7 @@ Some skills make outbound requests to public APIs to fetch metadata:
 - **CrossRef API** (api.crossref.org) — for DOI lookups and BibTeX entries
 - **Semantic Scholar API** (api.semanticscholar.org) — for reference verification
 
-These requests contain only the query parameters you provide (e.g., a DOI or search term). No authentication tokens, personal identifiers, or tracking data are sent. Please refer to each service's own privacy policy for how they handle incoming requests.
+These requests contain the query parameters you provide (e.g., a DOI or search term). The OpenAlex skill optionally sends your email address as a `mailto` parameter to access their higher-rate "polite pool" — this is standard practice per the [OpenAlex API documentation](https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication). No other personal identifiers or tracking data are sent by claude-scholar. Please refer to each service's own privacy policy for how they handle incoming requests.
 
 ## Contact
 
