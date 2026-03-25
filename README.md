@@ -4,6 +4,10 @@ Academic research tools for [Claude Code](https://claude.ai/code). Literature se
 
 > **Note**: These skills are early-stage and not comprehensively tested. Proceed with caution!
 
+## Basic principle for skill development and inclusion 
+
+Don't overbuild. Foundation models and agent harnesses are getting better fast, and overbuilt structure becomes a maintenance burden that constrains the base model rather than helping it. These skills exist only where they add something Claude can't quickly or easily do on its own: calling external APIs, running programmatic verification, or encoding multi-step checklists that are easy to forget. No skill for something Claude already handles well out of the box or will likely handle with minimal guidance or conversation.
+
 ## Skills
 
 | Skill | Description |
