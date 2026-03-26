@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Academic research tools — arXiv metadata, OpenAlex, BibTeX, citation verification, LaTeX cleanup, math verification, and pre-submission checks",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
