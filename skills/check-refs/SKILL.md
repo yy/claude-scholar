@@ -36,13 +36,18 @@ For `.bib`: look for `main.bib` or `references.bib` next to the `.tex` file, or 
 
 ### 2. Run existence check (fast, no API key needed)
 
+Run in the background with a 10-minute timeout — bibsleuth queries multiple academic APIs and can take several minutes for large bibliographies:
+
 ```bash
+# Use Bash tool with run_in_background: true, timeout: 600000
 uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> --no-llm -o /tmp/bibsleuth-report
 ```
 
+Tell the user the check is running in the background and continue with other work. You will be notified when it completes.
+
 ### 3. Present results
 
-Read `/tmp/bibsleuth-report.md` and summarize:
+Once notified that the command finished, read `/tmp/bibsleuth-report.md` and summarize:
 - Count by verdict: verified, likely, unverified, retracted
 - List **unverified** entries with their bib keys — these need attention
 - List **suggested patches** (missing DOIs, URLs)
@@ -51,7 +56,7 @@ Read `/tmp/bibsleuth-report.md` and summarize:
 ### 4. Offer next steps
 
 - **Apply patches**: offer to add suggested DOIs/URLs to the `.bib` file (ask before editing)
-- **Full LLM analysis**: if user wants mis-citation detection and missing citation suggestions, run without `--no-llm` (requires `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`):
+- **Full LLM analysis**: if user wants mis-citation detection and missing citation suggestions, run without `--no-llm` (requires `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`). Also run in background with 10-minute timeout:
   ```bash
   uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> -o /tmp/bibsleuth-report
   ```
