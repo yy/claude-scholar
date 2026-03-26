@@ -36,29 +36,29 @@ For `.bib`: look for `main.bib` or `references.bib` next to the `.tex` file, or 
 
 ### 2. Run existence check (fast, no API key needed)
 
-Run in the background with a 10-minute timeout — bibsleuth queries multiple academic APIs and can take several minutes for large bibliographies:
+Run in the background with a 10-minute timeout — bibsleuth queries multiple academic APIs and can take several minutes for large bibliographies. Bibsleuth writes `bibsleuth-report.json` and `bibsleuth-report.md` next to the input file by default.
 
 ```bash
 # Use Bash tool with run_in_background: true, timeout: 600000
-uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> --no-llm -o /tmp/bibsleuth-report
+uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> --no-llm
 ```
 
 Tell the user the check is running in the background and continue with other work. You will be notified when it completes.
 
 ### 3. Present results
 
-Once notified that the command finished, read `/tmp/bibsleuth-report.md` and summarize:
-- Count by verdict: verified, likely, unverified, retracted
-- List **unverified** entries with their bib keys — these need attention
-- List **suggested patches** (missing DOIs, URLs)
-- Note: "not found" does not mean fake — some papers aren't in the databases
+Once notified that the command finished, read the `bibsleuth-report.md` file (in the same directory as the input file) and summarize:
+- The report is grouped by verdict (verified, likely, unverified, error) and entry category (academic papers, books, software/data)
+- Focus on **unverified** entries — these need attention
+- List **suggested patches** (missing DOIs, URLs) from the patches section
+- Tell the user where the full report file is
 
 ### 4. Offer next steps
 
 - **Apply patches**: offer to add suggested DOIs/URLs to the `.bib` file (ask before editing)
 - **Full LLM analysis**: if user wants mis-citation detection and missing citation suggestions, run without `--no-llm` (requires `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`). Also run in background with 10-minute timeout:
   ```bash
-  uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> -o /tmp/bibsleuth-report
+  uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE>
   ```
 - **Save to library**: `uvx bibsleuth library add <BIB_FILE>`
 
