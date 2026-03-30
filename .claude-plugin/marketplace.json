@@ -5,7 +5,7 @@
     "email": "yongyeol@gmail.com"
   },
   "metadata": {
-    "description": "Academic research tools — arXiv metadata, OpenAlex, BibTeX, citation verification, LaTeX cleanup, math verification, and pre-submission checks",
+    "description": "Academic research tools — arXiv metadata, OpenAlex, BibTeX, citation verification, LaTeX cleanup, math verification, pre-submission checks, and manuscript critique",
     "version": "0.1.1"
   },
   "plugins": [
@@ -21,7 +21,8 @@
         "./skills/latex-cleanup",
         "./skills/verify-math",
         "./skills/openalex",
-        "./skills/presubmit-checks"
+        "./skills/presubmit-checks",
+        "./skills/manuscript-critique"
       ]
     }
   ]

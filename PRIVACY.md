@@ -20,7 +20,7 @@ The **check-refs** skill uses [bibsleuth](https://github.com/yy/bibsleuth), whic
 
 ## Local-only skills
 
-The following skills perform all operations locally and make no network requests: **latex-cleanup**, **verify-math**, **arxiv-prep**, and **presubmit-checks** (though presubmit-checks invokes check-refs, which may make external requests as described above).
+The following skills perform all operations locally and make no network requests: **latex-cleanup**, **verify-math**, **arxiv-prep**, **manuscript-critique**, and **presubmit-checks** (though presubmit-checks invokes check-refs, which may make external requests as described above).
 
 Please refer to each external service's own privacy policy for how they handle incoming requests.
 

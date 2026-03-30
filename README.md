@@ -20,6 +20,7 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 | `verify-math` | Verify mathematical derivations step-by-step using SymPy |
 | `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, and front matter |
+| `manuscript-critique` | Critique your own manuscript before submission — find weaknesses before reviewers do |
 
 ## Installation
 
@@ -40,6 +41,7 @@ Skills are invoked as slash commands:
 /verify-math
 /openalex
 /arxiv-prep
+/manuscript-critique
 ```
 
 ## Dependencies
