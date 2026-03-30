@@ -32,7 +32,15 @@ If a Makefile exists, run `make` and check for:
 - Overfull hboxes (badly broken lines)
 Report warnings count and list the critical ones.
 
-### 4. Front matter review
+### 4. Figure format check
+
+Scan for all figures included in the paper (`\includegraphics`, `\input` for pgf/tikz). For each figure file:
+- Check the file extension — PDF, EPS, and PGF/TikZ are vector formats (good). PNG, JPG/JPEG, TIFF, and BMP are bitmap formats (flag).
+- For any bitmap figure found, report the filename, resolution if detectable, and file size.
+- Flag bitmap figures as **blockers** — they often indicate low-resolution images that will look poor in print.
+- Exception: photographs and screenshots are legitimately bitmap — note this but still flag for the user to confirm intentionality.
+
+### 5. Front matter review
 Read the paper and check:
 - **Affiliations**: List all authors and their affiliations. Flag if any author is missing an affiliation or if affiliations look incomplete (e.g., missing department, institution, or country).
 - **Acknowledgements**: Extract the acknowledgements section and list:
@@ -58,7 +66,8 @@ Launch subagents for independent checks:
 - **Agent 1**: Run check-refs (bibsleuth existence check)
 - **Agent 2**: Run latex-cleanup skill on the `.tex` file
 - **Agent 3**: Run `make` in the paper directory if Makefile exists
-- **Agent 4**: Front matter review — read the paper and extract affiliations, acknowledgements (grants + people thanked), and code/data availability statements for the user to verify
+- **Agent 4**: Figure format check — scan all `\includegraphics` paths and flag bitmap formats (PNG, JPG, TIFF, BMP)
+- **Agent 5**: Front matter review — read the paper and extract affiliations, acknowledgements (grants + people thanked), and code/data availability statements for the user to verify
 
 ### 3. Present unified report
 
@@ -69,6 +78,7 @@ Organize findings by severity:
 - Undefined references/citations
 - Compilation errors
 - Retracted citations
+- Bitmap figures (PNG, JPG, TIFF, BMP) — should be vector (PDF, EPS) unless intentionally raster (photos, screenshots)
 - Missing code/data availability statement (if journal requires it)
 
 **Warnings** (should fix):
@@ -88,13 +98,20 @@ Organize findings by severity:
 - LaTeX style issues
 - Spacing/typography
 
-### 4. Offer to fix
+### 5. Offer to fix
 
 For each category, offer to fix what can be automated:
 - Apply `.bib` patches (DOIs, URLs)
 - Remove draft artifacts
 - Fix spacing issues
 - Ask before each category of changes
+
+### 6. Offer content review
+
+After presenting the report and addressing formatting/technical issues, offer:
+"Want me to run `/manuscript-critique` to check for content-level weaknesses reviewers might flag?"
+
+This is a deeper, separate pass that evaluates the paper's substance (literature, methodology, claims, etc.) rather than its formatting and technical correctness.
 
 ## Rules
 
