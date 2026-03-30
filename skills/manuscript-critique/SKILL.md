@@ -1,7 +1,7 @@
 ---
 name: manuscript-critique
 user_invocable: true
-description: Critique your own manuscript before submission. Systematic evaluation across review criteria to find weaknesses before reviewers do.
+description: Structured self-review of your manuscript before submission. Systematic evaluation across review criteria.
 ---
 
 # manuscript-critique

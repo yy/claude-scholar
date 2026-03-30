@@ -22,6 +22,44 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
 | `manuscript-critique` | Structured self-review of your manuscript before submission |
 
+## Skill details
+
+### `arxiv-metadata`
+
+Fetches structured metadata from arXiv given an arXiv ID or URL — title, authors, date, categories, DOI. Handles multiple ID formats (new and old-style). Mainly used by other skills and agents rather than invoked directly.
+
+### `arxiv-prep`
+
+Automates arXiv submission packaging: cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
+
+### `check-refs`
+
+Verifies that every citation in a LaTeX paper exists in academic databases, flags suspicious entries, and suggests missing DOIs/URLs. Uses [bibsleuth](https://github.com/yy/bibsleuth). Can run standalone or as part of `presubmit-checks`.
+
+### `doi-bibtex`
+
+Given a DOI (bare or full URL), fetches the BibTeX entry and appends it to the project's `.bib` file, checking for duplicates. Simple utility — mainly invoked by Claude when adding references.
+
+### `latex-cleanup`
+
+Systematic review of LaTeX documents for common issues: style consistency, typography, cross-references, draft artifacts, debugging code. Identifies all `.tex` files in the project (including `\input`/`\include` targets) and flags problems.
+
+### `verify-math`
+
+Step-by-step verification of mathematical derivations using SymPy. Each derivation step is validated programmatically — useful for catching algebra and calculus errors in proofs and equations.
+
+### `openalex`
+
+Queries the [OpenAlex](https://openalex.org) API (240M+ scholarly works) for literature searches, citation analysis, and bibliometric queries. The helper script handles rate limiting, retries, and pagination. No API key required.
+
+### `presubmit-checks`
+
+Pre-submission checklist that orchestrates multiple checks in parallel: references (`check-refs`), LaTeX cleanup (`latex-cleanup`), build verification, figure format checks (flags bitmap figures that should be vector), and front matter review (affiliations, acknowledgements, data availability). Presents a unified report organized by severity.
+
+### `manuscript-critique`
+
+Structured self-review of your own manuscript before submission. Evaluates the paper across seven review criteria — literature and novelty, methodological rigor, causal claims, data quality, generalizability, mechanism, and clarity — and produces a report with top risks, what to preserve, anticipated reviewer questions, and detailed criterion-by-criterion comments anchored to specific sections of the paper. Optionally searches OpenAlex for missing literature. Designed strictly for self-review; declines to review others' unpublished work.
+
 ## Installation
 
 ```
