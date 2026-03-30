@@ -30,17 +30,11 @@ Search in this order:
 4. `main.tex`
 5. Glob for `**/*.tex` with `\begin{document}`
 
-Also accept PDF files if the user provides a path to one.
-
 #### 2. Confirm ownership
 
 Before proceeding, ask: "To confirm — is this your own manuscript?" If the user indicates it is not their work, explain that this skill is designed for self-review and decline to proceed.
 
-#### 3. Ask about scope
-
-Ask two things:
-- "Are there specific aspects of your paper you're worried about, or should I do a general critique?"
-- "Should I search for potentially relevant literature using OpenAlex, or stay local?" If the user opts in, the literature and novelty criterion will use `/openalex` or similar skills to (1) situate the manuscript better (2) surface papers that may be missing from the references.
+Default to a general critique with local-only evaluation. If the user mentions specific concerns or asks for literature search, adjust accordingly. Do not ask multiple scoping questions upfront.
 
 ### Phase 2: Read and summarize
 
@@ -64,9 +58,14 @@ Is the paper well-situated in prior work? Key questions:
 - Could a reviewer argue the contribution is too incremental or already known?
 - Are the most relevant and recent references cited?
 
-If the user opted into literature search (see Phase 1), use `/openalex` to search for potentially relevant papers based on your knowledge as well as the manuscript's key terms and claims. 
+If literature gaps are suspected, note them and guide the user on what to ask Claude to search for. For example: "You could ask me to search OpenAlex for papers on [specific topic] by [specific authors/groups] to check whether key references are missing." Provide concrete query suggestions — topics, author names, keywords — so the user can decide whether to follow up.
 
-If staying local, note suspected gaps and guide further literature search (fields, authors, keywords, etc.).
+If the user explicitly requests a literature search, use `/openalex` to run targeted queries derived from:
+- The paper's title and key claims
+- Specific novelty claims that seem under-supported
+- Author names or research groups working in the same area
+
+Present results as "potentially relevant papers to review" — clearly distinguish suspected gaps from confirmed missing prior work.
 
 #### 2. Methodological rigor
 
@@ -123,7 +122,7 @@ Is the paper well-written and self-contained? Key questions:
 
 ### Phase 4: Write the critique report
 
-Save the critique as a markdown file next to the paper (e.g., `YYYY-MM-DD-claude-scholar-critique-report.md` in the paper directory). This makes it shareable with co-authors and trackable across revisions.
+Before writing, confirm with the user: "I'll save the critique as `YYYY-MM-DD-critique-report.md` next to the paper — okay?"
 
 Use this structure:
 
@@ -137,9 +136,20 @@ Use this structure:
 
 (1-3 sentences)
 
-## Comments 
+## Top findings
 
-(Overview of what works well, what needs attention, and suggested improvements, based on the criteria laid out above.)
+### Top risks
+The 3 most important weaknesses that reviewers are likely to flag.
+
+### What to preserve
+Key strengths that should survive revisions.
+
+### Anticipated reviewer questions
+Questions reviewers are likely to ask. Preparing answers strengthens the paper and cover letter.
+
+## Detailed comments
+
+(Criterion-by-criterion assessment. For each, note strengths, flag weaknesses with suggested fixes. Skip criteria that don't apply.)
 
 ### Literature and novelty
 
@@ -168,15 +178,11 @@ Use this structure:
 ### Clarity and presentation
 
 ...
-
-## Anticipated reviewer questions
-
-Questions that reviewers are likely to ask. Preparing answers strengthens the paper and cover letter.
 ```
 
-For each criterion section, include both strengths and weaknesses together. Note what works well (so the author knows what to preserve), then flag issues with suggested fixes. Skip criteria that don't apply to the paper.
+For each criterion section, anchor every critique point to a specific location in the manuscript (section, figure, table, paragraph, or quoted claim). Vague feedback like "the literature review has gaps" is not useful — instead: "Section 2 does not cite any work on [topic], despite claiming novelty in this area (paragraph 3)."
 
-After writing the file, print a brief summary to the conversation highlighting the most important findings. When flagging literature gaps, suggest specific keywords, author names, or research areas the user can search — not tool commands.
+After writing the file, print a brief summary to the conversation highlighting the top findings. When flagging literature gaps, suggest specific keywords, author names, or research areas the user can ask Claude to search for.
 
 ## Rules
 
@@ -188,3 +194,4 @@ After writing the file, print a brief summary to the conversation highlighting t
 - Keep the critique proportional to the paper — a short workshop paper does not need pages of feedback.
 - Present strengths alongside weaknesses — the author needs to hear suggestions regarding what to preserve, not just what to fix.
 - In the critique report, use author-directed language ("your methods", "your claims", "your literature review").
+- Anchor every critique point to a specific location in the manuscript — cite the section, figure, table, or quoted claim. Generic feedback without evidence is not actionable.
