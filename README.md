@@ -20,7 +20,7 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 | `verify-math` | Verify mathematical derivations step-by-step using SymPy |
 | `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
-| `manuscript-critique` | Structured self-review of your manuscript before submission |
+| `manuscript-critique` | Structured self-review of your manuscript |
 
 ## Skill details
 
@@ -58,7 +58,7 @@ Pre-submission checklist that orchestrates multiple checks in parallel: referenc
 
 ### `manuscript-critique`
 
-Structured self-review of your own manuscript before submission. Evaluates the paper across seven review criteria — literature and novelty, methodological rigor, causal claims, data quality, generalizability, mechanism, and clarity — and produces a report with top risks, what to preserve, anticipated reviewer questions, and detailed criterion-by-criterion comments anchored to specific sections of the paper. Optionally searches OpenAlex for missing literature. Designed strictly for self-review; declines to review others' unpublished work.
+Structured self-review of your own manuscript before submission. Evaluates the paper across seven review criteria — literature and novelty, methodological rigor, causal claims, data quality, generalizability, mechanism, and clarity — and produces a report with top risks, what to preserve, anticipated reviewer questions, and detailed criterion-by-criterion comments anchored to specific sections of the paper. Optionally searches OpenAlex for missing literature. Designed strictly for self-review; declines to review others' unpublished work and explains why.
 
 ## Installation
 
