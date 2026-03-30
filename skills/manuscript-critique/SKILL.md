@@ -30,11 +30,17 @@ Search in this order:
 4. `main.tex`
 5. Glob for `**/*.tex` with `\begin{document}`
 
-#### 2. Confirm ownership
+#### 2. Setup via AskUserQuestion
 
-Before proceeding, ask: "To confirm — is this your own manuscript?" If the user indicates it is not their work, explain that this skill is designed for self-review and decline to proceed.
+Use the `AskUserQuestion` tool to collect setup in one step. Two questions:
 
-Default to a general critique with local-only evaluation. If the user mentions specific concerns or asks for literature search, adjust accordingly. Do not ask multiple scoping questions upfront.
+1. **"Is this your own manuscript?"** (header: "Ownership")
+   - Options: "Yes, it's mine" / "No"
+   - If "No": decline to proceed and explain why — uploading someone else's unpublished manuscript to an AI system without their consent risks exposing unpublished ideas, methods, and results. The content may be used for model training or retained in logs, potentially compromising the authors' ability to publish first or maintain confidentiality during peer review.
+
+2. **"Should I search for potentially missing literature via OpenAlex?"** (header: "Lit search")
+   - Options: "No, stay local" (recommended) / "Yes, search OpenAlex"
+   - Default is local-only. If opted in, the literature criterion will use `/openalex`.
 
 ### Phase 2: Read and summarize
 

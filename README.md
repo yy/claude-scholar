@@ -1,6 +1,6 @@
 # claude-scholar
 
-Academic research tools for [Claude Code](https://claude.ai/code). Literature search, citation management, LaTeX checks, math verification, and submission preparation. These tools assist with formatting and verification—they do not generate original research content. Please check your venue's AI use policy for guidance on whether and how to use these tools.
+Academic research tools for [Claude Code](https://claude.ai/code). Literature search, citation management, LaTeX checks, math verification, manuscript critique, and submission preparation. These tools assist with formatting and verification—they do not generate original research content. Please check your venue's AI use policy for guidance on whether and how to use these tools.
 
 > **Note**: These skills are early-stage and not comprehensively tested. Proceed with caution!
 
@@ -19,7 +19,7 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 | `latex-cleanup` | Review LaTeX documents for common issues, style consistency, typography, cross-references, and draft artifacts |
 | `verify-math` | Verify mathematical derivations step-by-step using SymPy |
 | `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
-| `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, and front matter |
+| `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
 | `manuscript-critique` | Critique your own manuscript before submission — find weaknesses before reviewers do |
 
 ## Installation
