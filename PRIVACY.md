@@ -1,26 +1,56 @@
 # Privacy Policy
 
-claude-scholar is a set of skills (plugins) for Claude Code that run on your local machine. claude-scholar itself does not collect, store, or transmit any personal data or usage information. However, some skills make outbound requests to external services:
+claude-scholar is a set of skills (plugins) for Claude Code. All skills run inside an AI coding agent, which means any content the agent reads during execution (LaTeX source, bibliography files, figure images, etc.) is sent to the underlying model provider (e.g., Anthropic's Claude API) as part of the conversation. This is inherent to how AI coding agents work and applies to all skills.
 
-## External API requests
+Beyond the model provider, skills vary in whether they send data to additional external services:
 
-Several skills query public APIs to fetch metadata. These requests contain only the query parameters you provide (e.g., a DOI, arXiv ID, or search term):
+## Data exposure categories
 
-- **arXiv API** (export.arxiv.org) — paper metadata lookups
-- **CrossRef API** (doi.org) — DOI resolution and BibTeX retrieval
-- **Semantic Scholar API** (api.semanticscholar.org) — reference verification
+### 1. Public API lookups only
 
-## OpenAlex API
+These skills send only short identifiers or search terms to public academic APIs. No manuscript content is transmitted by these skills themselves:
 
-The **openalex** skill queries the OpenAlex API (api.openalex.org) for literature searches. It optionally sends your email address as a `mailto` parameter to access the higher-rate "polite pool" — this is standard practice per the [OpenAlex API documentation](https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication).
+- **arxiv-metadata** — sends an arXiv ID to the arXiv API (export.arxiv.org)
+- **doi-bibtex** — sends a DOI to the CrossRef API (doi.org)
+- **openalex** — sends search terms to the OpenAlex API (api.openalex.org); optionally sends your email as a `mailto` parameter for the higher-rate "polite pool" per the [OpenAlex API documentation](https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication)
 
-## Reference checking (bibsleuth)
+### 2. AI model provider only
 
-The **check-refs** skill uses [bibsleuth](https://github.com/yy/bibsleuth), which queries academic databases to verify citations. When bibsleuth's LLM analysis mode is enabled, citation context and paper content may be sent to LLM APIs (Anthropic or OpenAI) using API keys from your environment. This mode requires explicit configuration and is not enabled by default.
+These skills send manuscript content or figures to the model provider but make no additional external requests:
 
-## Local-only skills
+- **latex-cleanup** — the agent reads your `.tex` files
+- **verify-math** — the agent reads your math expressions; SymPy runs locally
+- **critique-manuscript** — the agent reads your full manuscript (by default; optionally invokes `openalex`, see below)
+- **critique-figures** — the agent receives your figure images for vision analysis; programmatic checks (file format, bitmap-in-PDF) run locally
+- **arxiv-prep** — the agent reads your `.tex` files to identify the main document; packaging runs locally via [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner)
 
-The following skills perform all operations locally and make no network requests: **latex-cleanup**, **verify-math**, **arxiv-prep**, and **presubmit-checks** (though presubmit-checks invokes check-refs, which may make external requests as described above). **manuscript-critique** runs locally by default, but can optionally invoke the **openalex** skill for literature search if the user requests it.
+### 3. AI model provider + external services
+
+These skills send manuscript content to the model provider and additionally query external services:
+
+- **check-refs** — uses [bibsleuth](https://github.com/yy/bibsleuth), which queries academic databases (Semantic Scholar, CrossRef) to verify citations. When bibsleuth's LLM analysis mode is enabled, citation context may also be sent to LLM APIs (Anthropic or OpenAI) via your API keys. This mode requires explicit configuration and is not enabled by default.
+
+### 4. Composite skills
+
+These skills orchestrate other skills and inherit their data exposure:
+
+- **presubmit-checks** — invokes `latex-cleanup`, `check-refs`, and build verification. Data exposure depends on which sub-checks run (see above).
+- **critique-manuscript** — model-provider-only by default. If the user opts in to literature search, it additionally invokes `openalex`.
+
+## Per-skill summary
+
+| Skill | Agent reads | External requests |
+|-------|------------|-------------------|
+| `arxiv-metadata` | arXiv ID | arXiv API |
+| `doi-bibtex` | DOI | CrossRef API |
+| `openalex` | Search terms | OpenAlex API |
+| `arxiv-prep` | `.tex` files | None |
+| `check-refs` | `.bib` files | Semantic Scholar, CrossRef; optionally LLM APIs |
+| `critique-figures` | Figure images | None |
+| `critique-manuscript` | Full manuscript | None (optionally OpenAlex) |
+| `latex-cleanup` | `.tex` files | None |
+| `presubmit-checks` | `.tex` and `.bib` files | Via `check-refs` |
+| `verify-math` | Math expressions | None |
 
 Please refer to each external service's own privacy policy for how they handle incoming requests.
 

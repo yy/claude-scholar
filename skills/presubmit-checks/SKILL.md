@@ -109,7 +109,7 @@ For each category, offer to fix what can be automated:
 ### 6. Offer content review
 
 After presenting the report and addressing formatting/technical issues, offer:
-"Want me to run `/manuscript-critique` to check for content-level weaknesses reviewers might flag?"
+"Want me to run `/critique-manuscript` to check for content-level weaknesses reviewers might flag?"
 
 This is a deeper, separate pass that evaluates the paper's substance (literature, methodology, claims, etc.) rather than its formatting and technical correctness.
 

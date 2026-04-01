@@ -20,7 +20,8 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 | `verify-math` | Verify mathematical derivations step-by-step using SymPy |
 | `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
-| `manuscript-critique` | Structured self-review of your manuscript |
+| `critique-manuscript` | Structured self-review of your manuscript |
+| `critique-figures` | Critique figures for format, colorblind safety, legibility, overplotting, and chart choice |
 
 ## Skill details
 
@@ -56,9 +57,13 @@ Queries the [OpenAlex](https://openalex.org) API (240M+ scholarly works) for lit
 
 Pre-submission checklist that orchestrates multiple checks in parallel: references (`check-refs`), LaTeX cleanup (`latex-cleanup`), build verification, figure format checks (flags bitmap figures that should be vector), and front matter review (affiliations, acknowledgements, data availability). Presents a unified report organized by severity.
 
-### `manuscript-critique`
+### `critique-manuscript`
 
 Structured self-review of your own manuscript before submission. Evaluates the paper across seven review criteria — literature and novelty, methodological rigor, causal claims, data quality, generalizability, mechanism, and clarity — and produces a report with top risks, what to preserve, anticipated reviewer questions, and detailed criterion-by-criterion comments anchored to specific sections of the paper. Optionally searches OpenAlex for missing literature. Designed strictly for self-review; declines to review others' unpublished work and explains why.
+
+### `critique-figures`
+
+Critiques academic figures using a mix of programmatic checks and vision analysis. Checks file format and resolution (flags raster exports of plots/charts, detects bitmap-in-PDF wrappers), colorblind risk (red-green reliance), excessive categories, font legibility, overplotted scatterplots, and dynamite plots. Handles multi-panel figures by evaluating each panel individually. Resolves figures from `\includegraphics` references in the TeX tree. Report-only — does not modify figures.
 
 ## Installation
 
@@ -79,7 +84,8 @@ Skills are invoked as slash commands:
 /verify-math
 /openalex
 /arxiv-prep
-/manuscript-critique
+/critique-manuscript
+/critique-figures
 ```
 
 ## Dependencies

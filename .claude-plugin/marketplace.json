@@ -22,7 +22,8 @@
         "./skills/verify-math",
         "./skills/openalex",
         "./skills/presubmit-checks",
-        "./skills/manuscript-critique"
+        "./skills/critique-manuscript",
+        "./skills/critique-figures"
       ]
     }
   ]
