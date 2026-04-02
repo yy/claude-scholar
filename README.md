@@ -10,60 +10,84 @@ Don't overbuild. Foundation models and agent harnesses are getting better fast, 
 
 ## Skills
 
+### Lookup
+
+Single-purpose data retrieval from external sources.
+
 | Skill | Description |
 |-------|-------------|
 | `arxiv-metadata` | Fetch structured metadata for arXiv papers (title, authors, date, categories, DOI) |
-| `arxiv-prep` | Prepare an arXiv submission package — clean source, compile, extract metadata, create tarball |
-| `check-refs` | Verify citation references in LaTeX papers against academic databases using [bibsleuth](https://github.com/yy/bibsleuth) |
 | `doi-bibtex` | Fetch BibTeX entries from DOIs and add to `.bib` files |
+| `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
+
+### Analysis
+
+Inspect, verify, or critique artifacts — from programmatic checks to structured review.
+
+| Skill | Description |
+|-------|-------------|
+| `check-refs` | Verify citation references in LaTeX papers against academic databases using [bibsleuth](https://github.com/yy/bibsleuth) |
 | `latex-cleanup` | Review LaTeX documents for common issues, style consistency, typography, cross-references, and draft artifacts |
 | `verify-math` | Verify mathematical derivations step-by-step using SymPy |
-| `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
-| `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
-| `critique-manuscript` | Structured self-review of your manuscript |
 | `critique-figures` | Critique figures for format, colorblind safety, legibility, overplotting, and chart choice |
+| `critique-manuscript` | Structured self-review of your manuscript |
+
+### Orchestration
+
+Multi-step workflows that coordinate other skills or external tools.
+
+| Skill | Description |
+|-------|-------------|
+| `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
+| `arxiv-prep` | Prepare an arXiv submission package — clean source, compile, extract metadata, create tarball |
 
 ## Skill details
 
-### `arxiv-metadata`
+### Lookup
+
+#### `arxiv-metadata`
 
 Fetches structured metadata from arXiv given an arXiv ID or URL — title, authors, date, categories, DOI. Handles multiple ID formats (new and old-style). Mainly used by other skills and agents rather than invoked directly.
 
-### `arxiv-prep`
-
-Automates arXiv submission packaging: cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
-
-### `check-refs`
-
-Verifies that every citation in a LaTeX paper exists in academic databases, flags suspicious entries, and suggests missing DOIs/URLs. Uses [bibsleuth](https://github.com/yy/bibsleuth). Can run standalone or as part of `presubmit-checks`.
-
-### `doi-bibtex`
+#### `doi-bibtex`
 
 Given a DOI (bare or full URL), fetches the BibTeX entry and appends it to the project's `.bib` file, checking for duplicates. Simple utility — mainly invoked by Claude when adding references.
 
-### `latex-cleanup`
-
-Systematic review of LaTeX documents for common issues: style consistency, typography, cross-references, draft artifacts, debugging code. Identifies all `.tex` files in the project (including `\input`/`\include` targets) and flags problems.
-
-### `verify-math`
-
-Step-by-step verification of mathematical derivations using SymPy. Each derivation step is validated programmatically — useful for catching algebra and calculus errors in proofs and equations.
-
-### `openalex`
+#### `openalex`
 
 Queries the [OpenAlex](https://openalex.org) API (240M+ scholarly works) for literature searches, citation analysis, and bibliometric queries. The helper script handles rate limiting, retries, and pagination. No API key required.
 
-### `presubmit-checks`
+### Analysis
 
-Pre-submission checklist that orchestrates multiple checks in parallel: references (`check-refs`), LaTeX cleanup (`latex-cleanup`), build verification, figure format checks (flags bitmap figures that should be vector), and front matter review (affiliations, acknowledgements, data availability). Presents a unified report organized by severity.
+#### `check-refs`
 
-### `critique-manuscript`
+Verifies that every citation in a LaTeX paper exists in academic databases, flags suspicious entries, and suggests missing DOIs/URLs. Uses [bibsleuth](https://github.com/yy/bibsleuth). Can run standalone or as part of `presubmit-checks`.
+
+#### `latex-cleanup`
+
+Systematic review of LaTeX documents for common issues: style consistency, typography, cross-references, draft artifacts, debugging code. Identifies all `.tex` files in the project (including `\input`/`\include` targets) and flags problems.
+
+#### `verify-math`
+
+Step-by-step verification of mathematical derivations using SymPy. Each derivation step is validated programmatically — useful for catching algebra and calculus errors in proofs and equations.
+
+#### `critique-figures`
+
+Critiques academic figures using a mix of programmatic checks and vision analysis. Checks file format and resolution (flags raster exports of plots/charts, detects bitmap-in-PDF wrappers), colorblind risk (red-green reliance), excessive categories, font legibility, overplotted scatterplots, and dynamite plots. Handles multi-panel figures by evaluating each panel individually. Resolves figures from `\includegraphics` references in the TeX tree. Report-only — does not modify figures.
+
+#### `critique-manuscript`
 
 Structured self-review of your own manuscript before submission. Evaluates the paper across seven review criteria — literature and novelty, methodological rigor, causal claims, data quality, generalizability, mechanism, and clarity — and produces a report with top risks, what to preserve, anticipated reviewer questions, and detailed criterion-by-criterion comments anchored to specific sections of the paper. Optionally searches OpenAlex for missing literature. Designed strictly for self-review; declines to review others' unpublished work and explains why.
 
-### `critique-figures`
+### Orchestration
 
-Critiques academic figures using a mix of programmatic checks and vision analysis. Checks file format and resolution (flags raster exports of plots/charts, detects bitmap-in-PDF wrappers), colorblind risk (red-green reliance), excessive categories, font legibility, overplotted scatterplots, and dynamite plots. Handles multi-panel figures by evaluating each panel individually. Resolves figures from `\includegraphics` references in the TeX tree. Report-only — does not modify figures.
+#### `presubmit-checks`
+
+Pre-submission checklist that orchestrates multiple checks in parallel: references (`check-refs`), LaTeX cleanup (`latex-cleanup`), build verification, figure format checks (flags bitmap figures that should be vector), and front matter review (affiliations, acknowledgements, data availability). Presents a unified report organized by severity.
+
+#### `arxiv-prep`
+
+Automates arXiv submission packaging: cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
 
 ## Installation
 
