@@ -23,6 +23,7 @@ These skills send manuscript content or figures to the model provider but make n
 - **critique-manuscript** — the agent reads your full manuscript (by default; optionally invokes `openalex`, see below)
 - **critique-figures** — the agent receives your figure images for vision analysis; programmatic checks (file format, bitmap-in-PDF) run locally
 - **arxiv-prep** — the agent reads your `.tex` files to identify the main document; packaging runs locally via [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner)
+- **accessible-pdf** — the agent reads your `.tex` files to apply accessibility modifications; LuaLaTeX build runs locally
 
 ### 3. AI model provider + external services
 
@@ -44,6 +45,7 @@ These skills orchestrate other skills and inherit their data exposure:
 | `arxiv-metadata` | arXiv ID | arXiv API |
 | `doi-bibtex` | DOI | CrossRef API |
 | `openalex` | Search terms | OpenAlex API |
+| `accessible-pdf` | `.tex` files | None |
 | `arxiv-prep` | `.tex` files | None |
 | `check-refs` | `.bib` files | Semantic Scholar, CrossRef; optionally LLM APIs |
 | `critique-figures` | Figure images | None |
