@@ -40,6 +40,7 @@ Multi-step workflows that coordinate other skills or external tools.
 |-------|-------------|
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
 | `arxiv-prep` | Prepare an arXiv submission package — clean source, compile, extract metadata, create tarball |
+| `accessible-pdf` | Make LaTeX documents produce accessible tagged PDFs (PDF/UA-1, PDF/A-2b) — non-destructive copy + LuaLaTeX build |
 
 ## Skill details
 
@@ -89,6 +90,10 @@ Pre-submission checklist that orchestrates multiple checks in parallel: referenc
 
 Automates arXiv submission packaging: cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
 
+#### `accessible-pdf`
+
+Transforms a LaTeX document to produce tagged, screen-reader-friendly PDFs compliant with PDF/UA-1 and PDF/A-2b. Creates a non-destructive copy of the main `.tex` file with an `-accessible` suffix, applies five categories of changes (document metadata, OpenType fonts, hyperref accessibility metadata, symbol font replacements, LuaLaTeX build), and adds a `make accessible` target. Verifies tagging with `pdfinfo`. Works with any LaTeX document — CVs, syllabi, reports, papers. Requires TeX Live 2025+.
+
 ## Installation
 
 ```
@@ -110,6 +115,7 @@ Skills are invoked as slash commands:
 /arxiv-prep
 /critique-manuscript
 /critique-figures
+/accessible-pdf
 ```
 
 ## Dependencies
@@ -121,6 +127,7 @@ Some skills require external tools:
 - **arxiv-prep**: [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) (`uvx arxiv-latex-cleaner`)
 - **openalex**: Python with `requests` (included in the plugin's helper scripts)
 - **arxiv-metadata**: Python with `requests` (`uv run` with inline script dependencies)
+- **accessible-pdf**: TeX Live 2025+ with LuaLaTeX, `latexmk`, `pdfinfo` (poppler)
 
 ## Acknowledgements
 

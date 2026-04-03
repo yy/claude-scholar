@@ -23,7 +23,8 @@
         "./skills/openalex",
         "./skills/presubmit-checks",
         "./skills/critique-manuscript",
-        "./skills/critique-figures"
+        "./skills/critique-figures",
+        "./skills/accessible-pdf"
       ]
     }
   ]
