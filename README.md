@@ -32,9 +32,9 @@ Inspect, verify, or critique artifacts — from programmatic checks to structure
 | `critique-figures` | Critique figures for format, colorblind safety, legibility, overplotting, and chart choice |
 | `critique-manuscript` | Structured self-review of your manuscript |
 
-### Orchestration
+### Workflow
 
-Multi-step workflows that coordinate other skills or external tools.
+Multi-step workflows — coordinating checks, preparing submissions, or transforming documents.
 
 | Skill | Description |
 |-------|-------------|
