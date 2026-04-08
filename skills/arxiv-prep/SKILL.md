@@ -35,7 +35,7 @@ Ask the user: "Want me to run the presubmit-checks first?" Skip if they say they
 
 #### 3. Check for supplements
 
-Scan for separate supplement/appendix `.tex` files (e.g., `supplement.tex`, `appendix.tex`, `si.tex`). If found, ask the user whether to:
+Scan for separate supplement/appendix `.tex` files (e.g., `supp.tex`, `appendix.tex`, `si.tex`). If found, ask the user whether to:
 - **Merge** into the main file via `\appendix` (arXiv prefers single-PDF submissions)
 - **Keep separate** (will be included as ancillary files)
 
@@ -50,13 +50,40 @@ Flag these and ask before changing.
 
 ### Phase 2: Automated cleaning
 
-#### 5. Run arxiv-latex-cleaner
+#### 5. Optimize bibliography
+
+Run `bib_optimizer` to remove unused citations and reorder entries to match their order of appearance in the text:
 
 ```bash
-uvx arxiv-latex-cleaner <paper-dir> --resize_images --im_size 500
+uvx bib_optimizer bibopt <main.tex> <references.bib> <references_cleaned.bib>
 ```
 
-This creates a `<paper-dir>_arXiv/` directory with a cleaned copy. The original is untouched.
+- If the paper has a **supplement with its own `.bib`** (e.g., `si.tex`/`supp.tex` using `si_references.bib`), run `bibopt` separately for each:
+  ```bash
+  uvx bib_optimizer bibopt <si.tex> <si_references.bib> <si_references_cleaned.bib>
+  ```
+- If the supplement **shares the main `.bib`**, run `bibopt` on each `.tex` file separately against the same `.bib`, then merge the two outputs (concatenate and deduplicate entries by cite key):
+  ```bash
+  uvx bib_optimizer bibopt <main.tex> <references.bib> <references_main.bib>
+  uvx bib_optimizer bibopt <si.tex> <references.bib> <references_si.bib>
+  ```
+  Then merge with `bibtool` (deduplicates by cite key):
+  ```bash
+  bibtool -d references_main.bib references_si.bib -o references_cleaned.bib
+  ```
+  If `bibtool` is not available, concatenate both files and manually remove any duplicate `@type{key,` entries (keep the first occurrence).
+- Update the `\bibliography{...}` command in each `.tex` file to point to the cleaned file.
+- The original `.bib` is never modified.
+
+If `bib_optimizer` is not available, skip this step — the `.bib` will still be handled in step 7.
+
+#### 6. Run arxiv-latex-cleaner
+
+```bash
+uvx arxiv-latex-cleaner <paper-dir> --resize_images --im_size 500 --compress_pdf
+```
+
+This creates a `<paper-dir>_arXiv/` directory with a cleaned copy. The original is untouched. The `--compress_pdf` flag reduces embedded PDF figure sizes, helping stay under arXiv's 50 MB limit.
 
 If `arxiv-latex-cleaner` is not available, fall back to manual cleaning:
 - Copy the paper directory
@@ -64,7 +91,7 @@ If `arxiv-latex-cleaner` is not available, fall back to manual cleaning:
 - Remove commented-out text blocks (lines starting with `%` that aren't TeX directives)
 - Remove unused `.tex` files not referenced by `\input` or `\include`
 
-#### 6. Post-cleaner fixes in `_arXiv/`
+#### 7. Post-cleaner fixes in `_arXiv/`
 
 Apply these fixes to the cleaned copy:
 
@@ -76,7 +103,7 @@ Apply these fixes to the cleaned copy:
 
 ### Phase 3: Verify & package
 
-#### 7. Test compilation
+#### 8. Test compilation
 
 Run in the `_arXiv/` directory:
 
@@ -91,17 +118,17 @@ pdflatex -interaction=nonstopmode main.tex
 - **Warnings**: undefined references, missing citations, overfull hboxes
 - If compilation fails, report the error but continue to the next steps
 
-#### 8. Extract clean metadata
+#### 9. Extract clean metadata
 
 Parse the `.tex` file to extract metadata for copy-paste into the arXiv submission form:
 - **Title**: from `\title{...}` — strip LaTeX commands, math mode, line breaks
 - **Abstract**: from `\begin{abstract}...\end{abstract}` — strip LaTeX commands
 - **Authors**: from `\author{...}` — extract names, strip affiliations/footnotes
-- **Comments**: suggest standard format, e.g., "15 pages, 8 figures"
+- **Comments**: suggest standard format. If the paper has supplementary material, use: "Main text: X pages, X figures. Supplementary Information: X pages, X figures". Otherwise: "X pages, X figures"
 
 Present this in a clean, copy-pasteable format.
 
-#### 9. Create tarball
+#### 10. Create tarball
 
 ```bash
 cd <paper-dir>_arXiv && tar -cvf ../arxiv-submission.tar *
@@ -111,7 +138,7 @@ cd <paper-dir>_arXiv && tar -cvf ../arxiv-submission.tar *
 - Report the file count and size
 - Note: arXiv also accepts `.tar.gz` — use gzip if close to the limit
 
-#### 10. Final summary
+#### 11. Final summary
 
 Present:
 - Package location and size
@@ -130,3 +157,4 @@ Present:
 - Ask before destructive operations (deleting `.bib`, merging supplements)
 - If any step fails, continue with the remaining steps and report all issues at the end
 - Keep the final summary concise and actionable
+

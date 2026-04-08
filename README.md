@@ -90,7 +90,7 @@ Pre-submission checklist that orchestrates multiple checks in parallel: referenc
 
 #### `arxiv-prep`
 
-Automates arXiv submission packaging: cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
+Automates arXiv submission packaging: optimizes bibliography (removes unused entries, reorders to match appearance), cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses [bib_optimizer](https://github.com/kwyip/bib_optimizer) and Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
 
 #### `accessible-pdf`
 
@@ -126,7 +126,7 @@ Some skills require external tools:
 
 - **check-refs**: [bibsleuth](https://github.com/yy/bibsleuth) (`uvx bibsleuth`)
 - **verify-math**: [SymPy](https://www.sympy.org) (`uv run` with sympy available)
-- **arxiv-prep**: [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) (`uvx arxiv-latex-cleaner`)
+- **arxiv-prep**: [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) (`uvx arxiv-latex-cleaner`), [bib_optimizer](https://github.com/kwyip/bib_optimizer) (`uvx bib_optimizer`), optionally [bibtool](https://github.com/ge-ne/bibtool) for merging shared bibliographies
 - **openalex**: Python with `requests` (included in the plugin's helper scripts)
 - **arxiv-metadata**: Python with `requests` (`uv run` with inline script dependencies)
 - **accessible-pdf**: TeX Live 2025+ with LuaLaTeX, `latexmk`, `pdfinfo` (poppler)
@@ -136,6 +136,7 @@ Some skills require external tools:
 - [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills) — inspiration and starting point for the OpenAlex skill
 - [Sadamori Kojaku](https://github.com/skojaku) — inspiration for the math verification skill
 - [Trevor Campbell's arXiv checklist](https://trevorcampbell.me/html/arxiv.html) — inspiration for the arXiv prep skill
+- [NERDS@ITU arxiv submission guide](https://github.com/NERDSITU/research-resources/blob/main/arxivsubmission.md) — bibliography optimization workflow for arXiv prep
 
 ## License
 
