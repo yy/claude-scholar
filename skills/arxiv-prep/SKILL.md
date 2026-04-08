@@ -98,7 +98,7 @@ Apply these fixes to the cleaned copy:
 - **4-pass trick**: Add `\typeout{get arXiv to do 4 passes}` on the line after `\end{document}` — this ensures arXiv runs enough LaTeX passes to resolve all references
 - **Ensure `.bbl` exists**: Check if a `.bbl` file exists. If not, compile with `pdflatex` + `bibtex`/`biber` to generate it. arXiv needs the `.bbl`, not the `.bib`
 - **Ask before deleting `.bib`**: If `.bbl` exists, ask the user whether to remove `.bib` files (reduces package size; arXiv uses `.bbl` directly)
-- **Clean aux files**: Remove `.aux`, `.log`, `.out`, `.blg`, `.fls`, `.fdb_latexmk`, `.synctex.gz`, `.toc`, `.lof`, `.lot`, `.nav`, `.snm`, `.vrb`
+- **Clean aux files**: Remove `.aux`, `.log`, `.out`, `.blg`, `.fls`, `.fdb_latexmk`, `.synctex.gz`, `.toc`, `.lof`, `.lot`, `.nav`, `.snm`, `.vrb`. Do **not** use `latexmk -CA` here — it also removes `.bbl`, which arXiv needs
 - **Remove `.git/`** if it exists in the copy
 
 ### Phase 3: Verify & package
