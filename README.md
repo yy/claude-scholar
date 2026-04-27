@@ -41,6 +41,7 @@ Multi-step workflows — coordinating checks, preparing submissions, or transfor
 | Skill | Description |
 |-------|-------------|
 | `presubmit-checks` | Pre-submission checklist — references, LaTeX cleanup, build, figure format, and front matter |
+| `bib-doi-toggle` | Toggle DOI/URL display in a biblatex bibliography so refs are clickable in the compiled PDF |
 | `arxiv-prep` | Prepare an arXiv submission package — clean source, compile, extract metadata, create tarball |
 | `accessible-pdf` | Make LaTeX documents produce accessible tagged PDFs (PDF/UA-1, PDF/A-2b) — non-destructive copy + LuaLaTeX build |
 
@@ -88,6 +89,10 @@ Structured self-review of your own manuscript before submission. Evaluates the p
 
 Pre-submission checklist that orchestrates multiple checks in parallel: references (`check-refs`), LaTeX cleanup (`latex-cleanup`), build verification, figure format checks (flags bitmap figures that should be vector), and front matter review (affiliations, acknowledgements, data availability). Presents a unified report organized by severity.
 
+#### `bib-doi-toggle`
+
+Toggles DOI/URL display in the compiled bibliography of a biblatex paper by editing the `\usepackage[...]{biblatex}` options. Turn on during writing and review so co-authors and reviewers can click through to verify each citation; turn off only if a venue specifically requires DOI/URL fields stripped from references (rare). Invoking with `on` / `off` applies directly; with no argument the skill asks. After turning on, it scans the `.bib` for entries missing a DOI and offers to backfill them via `doi-bibtex` or `openalex`. biblatex-only (bails out for natbib).
+
 #### `arxiv-prep`
 
 Automates arXiv submission packaging: optimizes bibliography (removes unused entries, reorders to match appearance), cleans source files, removes cruft, verifies compilation, extracts metadata for the submission form, and produces a ready-to-upload tarball. Uses [bib_optimizer](https://github.com/kwyip/bib_optimizer) and Google's [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) under the hood. Complements `presubmit-checks` (content quality) by handling the packaging side.
@@ -114,6 +119,7 @@ Skills are invoked as slash commands:
 /presubmit-checks
 /verify-math
 /openalex
+/bib-doi-toggle
 /arxiv-prep
 /critique-manuscript
 /critique-figures
