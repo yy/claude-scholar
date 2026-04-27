@@ -91,7 +91,7 @@ Pre-submission checklist that orchestrates multiple checks in parallel: referenc
 
 #### `bib-doi-toggle`
 
-Toggles DOI/URL display in the compiled bibliography of a biblatex paper by editing the `\usepackage[...]{biblatex}` options. Turn on during writing and review so co-authors and reviewers can click through to verify each citation; turn off only if a venue specifically requires DOI/URL fields stripped from references (rare). Invoking with `on` / `off` applies directly; with no argument the skill asks. After turning on, it scans the `.bib` for entries missing a DOI and offers to backfill them via `doi-bibtex` or `openalex`. biblatex-only (bails out for natbib).
+Toggles DOI/URL display in the compiled bibliography of a biblatex paper by editing the `\usepackage[...]{biblatex}` options. Turning on makes references clickable in the PDF so co-authors and reviewers can verify each citation. Invoking with `on` / `off` applies directly; with no argument the skill asks. After turning on, it scans the `.bib` for entries missing a DOI and offers to backfill them via `doi-bibtex` or `openalex`. biblatex-only (bails out for natbib).
 
 #### `arxiv-prep`
 
