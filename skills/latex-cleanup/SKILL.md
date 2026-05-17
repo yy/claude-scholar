@@ -76,9 +76,12 @@ Report organized by category with specific line references. Offer to fix issues 
 ### 4. Cross-references
 
 - [ ] **Undefined references**: Search for `??` in output or `\ref` to undefined labels
-- [ ] **Duplicate labels**: Check for labels used more than once
+- [ ] **Duplicate labels**: Check for labels used more than once, including figures, tables, equations, sections, and appendices
 - [ ] **Unused labels**: Labels defined but never referenced
+- [ ] **Float reference order**: For each float family separately (figures, tables, algorithms, etc.), verify that items are first referenced in the same order they appear in the paper. Flag cases where, for example, Figure~`\ref{fig:third}` is first mentioned before Figure~`\ref{fig:second}`
 - [ ] **Broken cross-file references**: For multi-file documents
+
+For float reference-order checks, identify labeled floats in source order, then scan the manuscript text in reading order for the first reference to each label. Compare the two sequences within each float type separately; do not require one global order across figures, tables, algorithms, etc.
 
 ### 5. Typography
 
