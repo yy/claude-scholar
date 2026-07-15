@@ -1,76 +1,31 @@
 ---
 name: check-refs
 user_invocable: true
-description: Verify citation references in a LaTeX paper. Checks that all cited papers exist in academic databases, flags suspicious entries, and suggests missing DOIs/URLs. Use when the user wants to check references, verify citations, or before submission.
+description: Match references in a LaTeX paper against academic databases, flag entries that need review, and suggest missing DOIs or URLs. Use when checking citations or preparing a paper for submission.
 ---
 
-# check-refs — Citation Reference Check
+# Check citation references
 
-Verify all references in a LaTeX paper against academic databases.
-
-## When to Use
-
-- "check my references", "verify citations", "check refs"
-- Called by the `presubmit-checks` skill as one of its checks
-- Before submitting a paper draft
+Match a LaTeX paper's references against academic databases with `bibsleuth`. Database matches support bibliographic verification but do not prove that a citation supports the manuscript's claim.
 
 ## Workflow
 
-### 1. Find the paper files
+Use user-provided paths when available. Otherwise, identify the manuscript entrypoint from the project's build configuration and TeX structure, then resolve its bibliography declarations. Ask only if multiple plausible papers remain.
 
-Look for `.tex` and `.bib` files. Common project structures:
-
-- `paper/current/main.tex` + `paper/current/main.bib` (standard project template)
-- `paper/current/main.tex` + `paper/current/references.bib`
-- `paper/main.tex` + `paper/main.bib` (flat layout)
-- `main.tex` + `references.bib` (root-level)
-
-Search order:
-1. If user provides a path, use it
-2. Look for `paper/current/main.tex`
-3. Look for `paper/main.tex`
-4. Look for `main.tex` in current directory
-5. Glob for `**/*.tex` and pick the main file (the one with `\begin{document}`)
-
-For `.bib`: look for `main.bib` or `references.bib` next to the `.tex` file, or let bibsleuth auto-detect from `\bibliography{}`.
-
-### 2. Run existence check (fast, no API key needed)
-
-Run in the background with a 10-minute timeout — bibsleuth queries multiple academic APIs and can take several minutes for large bibliographies. Bibsleuth writes `bibsleuth-report.json` and `bibsleuth-report.md` next to the input file by default.
+Run the database-only check by default:
 
 ```bash
-# Use Bash tool with run_in_background: true, timeout: 600000
 uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE> --no-llm
 ```
 
-Tell the user the check is running in the background and continue with other work. You will be notified when it completes.
+`uvx` supplies the tool without a separate installation step. Allow enough time for large bibliographies and use asynchronous execution when the harness supports it.
 
-### 3. Present results
+Read the generated `bibsleuth-report.md`. Prioritize unverified and error results, summarize suggested DOI or URL patches, and link the full report. Apply patches only when the user requested reference repair or approves the proposed edits, then check the diff for unintended bibliography changes.
 
-Once notified that the command finished, read the `bibsleuth-report.md` file (in the same directory as the input file) and summarize:
-- The report is grouped by verdict (verified, likely, unverified, error) and entry category (academic papers, books, software/data)
-- Focus on **unverified** entries — these need attention
-- List **suggested patches** (missing DOIs, URLs) from the patches section
-- Tell the user where the full report file is
+For claim-level analysis, missing-citation suggestions, and contradiction searches, run the LLM mode only when the user requests it and accepts the additional model-provider exposure:
 
-### 4. Offer next steps
+```bash
+uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE>
+```
 
-- **Apply patches**: offer to add suggested DOIs/URLs to the `.bib` file (ask before editing)
-- **Full LLM analysis**: if user wants mis-citation detection and missing citation suggestions, run without `--no-llm` (requires `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`). Also run in background with 10-minute timeout:
-  ```bash
-  uvx bibsleuth check <TEX_FILE> --bib <BIB_FILE>
-  ```
-- **Save to library**: `uvx bibsleuth library add <BIB_FILE>`
-
-### 5. LLM analysis results (if run)
-
-Summarize additional findings:
-- **Mis-citations**: cited paper may not support the claim made in the text
-- **Suggested papers**: candidates for claims that could use stronger citations
-- **Contradictions**: well-cited papers that argue against claims in the paper
-
-## Rules
-
-- Always run `--no-llm` first — it's fast and free
-- Don't automatically edit the `.bib` — ask before applying patches
-- If bibsleuth is not installed, run `uv tool install bibsleuth` first
+If the user explicitly requested full analysis at the outset, do not force a redundant `--no-llm` pass first. Present suspected miscitation and literature findings as items for review, not established errors.
