@@ -17,6 +17,7 @@
         "./skills/arxiv-metadata",
         "./skills/arxiv-prep",
         "./skills/check-refs",
+        "./skills/bib-doi-toggle",
         "./skills/doi-bibtex",
         "./skills/latex-cleanup",
         "./skills/verify-math",
