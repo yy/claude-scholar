@@ -1,27 +1,15 @@
 ---
 name: verify-math
-description: Verify mathematical derivations step-by-step using SymPy
-version: 1.0.0
+description: Verify algebra, calculus, identities, equation solving, and nontrivial derivation steps with SymPy. Use when a mathematical result needs programmatic checking.
 ---
 
-# Math Derivation Skill
+# Verify mathematics with SymPy
 
-Verify mathematical derivations step-by-step using SymPy.
+Use the bundled script to check nontrivial symbolic transformations. When the user requests a fully audited derivation, verify each substantive step. Do not add tool calls after routine arithmetic or notation changes.
 
-## When to Use
+State relevant domains and assumptions before interpreting a result. SymPy may return expressions that are equal only under conditions involving signs, branches, singularities, or parameter values. Report those conditions instead of treating every simplified equality as a universal proof.
 
-- Deriving equations (differentiation, integration, algebraic manipulation)
-- Verifying mathematical identities
-- Step-by-step proofs where each step should be validated
-
-## Workflow
-
-For each derivation step:
-1. State the transformation being applied
-2. Write the result
-3. Verify with `./verify.py` before proceeding
-
-## Verification Commands
+## Commands
 
 ```bash
 # Check two expressions are equal
@@ -48,27 +36,3 @@ For each derivation step:
 - Functions: `sin(x)`, `cos(x)`, `exp(x)`, `log(x)`, `sqrt(x)`
 - Pre-defined symbols: `x y z t s n k a b c C`
 - Reserved symbols handled: `E I S N O` (treated as variables, not SymPy constants)
-
-## Example Derivation
-
-**Problem**: Find dF/ds where F(s) = s - log(e^s + C)
-
-**Step 1**: Apply derivative rule
-```
-dF/ds = 1 - d/ds[log(e^s + C)]
-      = 1 - e^s/(e^s + C)
-```
-
-```bash
-./verify.py diff "s - log(exp(s) + C)" s
-```
-
-**Step 2**: Simplify to single fraction
-```
-= (e^s + C - e^s)/(e^s + C)
-= C/(e^s + C)
-```
-
-```bash
-./verify.py eq "1 - exp(s)/(exp(s) + C)" "C/(exp(s) + C)"
-```
