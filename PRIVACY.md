@@ -12,7 +12,7 @@ These skills send only short identifiers or search terms to public academic APIs
 
 - **arxiv-metadata** — sends an arXiv ID to the arXiv API (export.arxiv.org)
 - **doi-bibtex** — sends a DOI to the CrossRef API (doi.org)
-- **openalex** — sends search terms to the OpenAlex API (api.openalex.org); optionally sends your email as a `mailto` parameter for the higher-rate "polite pool" per the [OpenAlex API documentation](https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication)
+- **openalex** — sends search terms and your OpenAlex API key to api.openalex.org; limited no-key requests are supported. The client also sends an email as a `mailto` parameter when explicitly configured.
 
 ### 2. AI model provider only
 

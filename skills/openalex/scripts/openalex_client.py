@@ -5,6 +5,7 @@
 # ///
 """OpenAlex API client with rate limiting, retries, and cursor pagination."""
 
+import os
 import time
 
 import requests
@@ -15,7 +16,8 @@ class OpenAlexClient:
 
     BASE_URL = "https://api.openalex.org"
 
-    def __init__(self, email=None, requests_per_second=10):
+    def __init__(self, api_key=None, email=None, requests_per_second=10):
+        self.api_key = api_key or os.getenv("OPENALEX_API_KEY")
         self.email = email
         self.min_delay = 1.0 / requests_per_second
         self.last_request_time = 0
@@ -29,6 +31,8 @@ class OpenAlexClient:
     def get(self, endpoint, params=None, max_retries=5):
         """Make a GET request with rate limiting and exponential backoff."""
         params = dict(params or {})
+        if self.api_key:
+            params["api_key"] = self.api_key
         if self.email:
             params["mailto"] = self.email
 
@@ -50,10 +54,10 @@ class OpenAlexClient:
         raise RuntimeError(f"Failed after {max_retries} retries: {endpoint}")
 
     def search_works(
-        self, search=None, filter_params=None, per_page=200, sort=None, select=None
+        self, search=None, filter_params=None, per_page=100, sort=None, select=None
     ):
         """Search works with optional filters, sorting, and field selection."""
-        params = {"per-page": min(per_page, 200)}
+        params = {"per_page": min(per_page, 100)}
         if search:
             params["search"] = search
         if filter_params:
@@ -69,12 +73,12 @@ class OpenAlexClient:
         return self.get(f"/{entity_type}/{entity_id}")
 
     def batch_lookup(self, entity_type, ids, id_field="openalex_id"):
-        """Look up multiple entities by ID (up to 50 per batch)."""
+        """Look up multiple entities by ID (up to 100 per batch)."""
         results = []
-        for i in range(0, len(ids), 50):
-            batch = "|".join(ids[i : i + 50])
+        for i in range(0, len(ids), 100):
+            batch = "|".join(ids[i : i + 100])
             resp = self.get(
-                f"/{entity_type}", {"filter": f"{id_field}:{batch}", "per-page": 50}
+                f"/{entity_type}", {"filter": f"{id_field}:{batch}", "per_page": 100}
             )
             results.extend(resp.get("results", []))
         return results
@@ -82,7 +86,7 @@ class OpenAlexClient:
     def paginate_all(self, endpoint, params=None, max_results=None):
         """Paginate through all results using cursor-based pagination."""
         params = dict(params or {})
-        params["per-page"] = 200
+        params["per_page"] = 100
         params["cursor"] = "*"
         params.pop("page", None)
 

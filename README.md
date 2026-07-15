@@ -20,7 +20,7 @@ Single-purpose data retrieval from external sources.
 |-------|-------------|
 | `arxiv-metadata` | Fetch structured metadata for arXiv papers (title, authors, date, categories, DOI) |
 | `doi-bibtex` | Fetch BibTeX entries from DOIs and add to `.bib` files |
-| `openalex` | Query and analyze 240M+ scholarly works via the [OpenAlex](https://openalex.org) API |
+| `openalex` | Query and analyze scholarly works via the [OpenAlex](https://openalex.org) API |
 
 ### Analysis
 
@@ -59,7 +59,7 @@ Given a DOI (bare or full URL), fetches the BibTeX entry and appends it to the p
 
 #### `openalex`
 
-Queries the [OpenAlex](https://openalex.org) API (240M+ scholarly works) for literature searches, citation analysis, and bibliometric queries. The helper script handles rate limiting, retries, and pagination. No API key required.
+Queries the [OpenAlex](https://openalex.org) API for literature searches, citation analysis, and bibliometric queries. The helper script handles authentication, rate limiting, retries, and pagination. Set `OPENALEX_API_KEY` for normal use; limited no-key requests are supported.
 
 ### Analysis
 
@@ -133,7 +133,7 @@ Some skills require external tools:
 - **check-refs**: [bibsleuth](https://github.com/yy/bibsleuth) (`uvx bibsleuth`)
 - **verify-math**: [SymPy](https://www.sympy.org) (`uv run` with sympy available)
 - **arxiv-prep**: [arxiv-latex-cleaner](https://github.com/google-research/arxiv-latex-cleaner) (`uvx arxiv-latex-cleaner`), [bib_optimizer](https://github.com/kwyip/bib_optimizer) (`uvx bib_optimizer`), optionally [bibtool](https://github.com/ge-ne/bibtool) for merging shared bibliographies
-- **openalex**: Python with `requests` (included in the plugin's helper scripts)
+- **openalex**: Python with `requests` and a free OpenAlex API key for normal use (included in the plugin's helper scripts)
 - **arxiv-metadata**: Python with `requests` (`uv run` with inline script dependencies)
 - **accessible-pdf**: TeX Live 2025+ with LuaLaTeX, `latexmk`, `pdfinfo` (poppler)
 
