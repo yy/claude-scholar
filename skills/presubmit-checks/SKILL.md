@@ -1,122 +1,57 @@
 ---
 name: presubmit-checks
 user_invocable: true
-description: Pre-submission checklist for LaTeX papers. Runs several checks in parallel — references, LaTeX cleanup, build, and front matter — then presents a unified report. Use before submitting or sharing a paper draft.
+description: Check a LaTeX paper before submission or circulation. Verify references, compilation, LaTeX hygiene, figure quality, affiliations, acknowledgements, and code or data availability, then return one severity-ranked report.
 ---
 
-# presubmit-checks — Paper Pre-Submission Checklist
+# Check a paper before submission
 
-Run a comprehensive set of checks on a LaTeX paper before submission.
+Inspect the paper without modifying it. Run independent checks concurrently when practical; the coordination method and number of agents may vary.
 
-## When to Use
+## Establish scope
 
-- "presubmit check", "check before I submit", "is my paper ready?"
-- Before submitting to a journal or conference
-- Before sharing a draft with co-authors
+Use a manuscript path supplied by the user. Otherwise, infer the main file from project configuration, build files, and the TeX document tree. Follow `\input` and `\include` dependencies and resolve figure and bibliography paths from the main document.
 
-## Checks
+Use the project's documented build command. If none is documented and a Makefile exists, use its default target. Record the command and working directory so failures are reproducible.
 
-The skill runs these checks, ideally in parallel via subagents:
+## Run the checks
 
-### 1. References (subagent: check-refs skill)
-Verify all cited papers exist in academic databases. Flag unverified entries, suggest missing DOIs.
+### References
 
-### 2. LaTeX cleanup (subagent: latex-cleanup skill)
-Run the full latex-cleanup checklist: common issues, style consistency, draft artifacts, cross-references, typography, and missing figures.
+Use the `check-refs` skill to verify cited works. Report retracted citations as blockers, distinguish unverified entries from nonexistent works, and note missing DOI or URL metadata separately.
 
-### 3. Build check
-If a Makefile exists, run `make` and check for:
-- Compilation errors
-- Undefined references (`LaTeX Warning: Reference ... undefined`)
-- Missing citations (`LaTeX Warning: Citation ... undefined`)
-- Overfull hboxes (badly broken lines)
-Report warnings count and list the critical ones.
+### LaTeX and build
 
-### 4. Figure format check
+Use the `latex-cleanup` skill for source-level checks. Build the paper and inspect the log for:
 
-Scan for all figures included in the paper (`\includegraphics`, `\input` for pgf/tikz). For each figure file:
-- Check the file extension — PDF, EPS, and PGF/TikZ are vector formats (good). PNG, JPG/JPEG, TIFF, and BMP are bitmap formats (flag).
-- For any bitmap figure found, report the filename, resolution if detectable, and file size.
-- Flag bitmap figures as **blockers** — they often indicate low-resolution images that will look poor in print.
-- Exception: photographs and screenshots are legitimately bitmap — note this but still flag for the user to confirm intentionality.
+- Compilation errors and missing files.
+- Undefined references or citations.
+- Draft artifacts and `draft` mode.
+- Overfull boxes that visibly damage layout.
 
-### 5. Front matter review
-Read the paper and check:
-- **Affiliations**: List all authors and their affiliations. Flag if any author is missing an affiliation or if affiliations look incomplete (e.g., missing department, institution, or country).
-- **Acknowledgements**: Extract the acknowledgements section and list:
-  - All grant numbers / funding sources mentioned
-  - All individuals thanked (for discussions, feedback, etc.)
-  - Flag if the acknowledgements section is missing entirely
-- **Code/data availability**: Check for a data availability statement or code availability statement. Flag if missing — most journals now require one. Look for `\dataavailability`, `\codeavailability`, or sections titled "Data Availability", "Code Availability", "Data and Code Availability", etc.
+Continue the other checks if the build fails.
 
-## Workflow
+### Figures
 
-### 1. Find the paper
+Use the `critique-figures` skill on the manuscript's rendered figures. Incorporate its findings on format, effective resolution, legibility, accessibility, visual encoding, panel labels, and statistical presentation.
 
-Same search logic as check-refs:
-1. User-provided path
-2. `paper/current/main.tex`
-3. `paper/main.tex`
-4. `main.tex`
-5. Glob for `**/*.tex` with `\begin{document}`
+Carry every blocker identified by `critique-figures` into the unified report. In particular, raster-only plots, diagrams, and line art remain submission blockers; apply that skill's rules for pixel-native and mixed figures.
 
-### 2. Run checks in parallel
+### Front matter
 
-Launch subagents for independent checks:
-- **Agent 1**: Run check-refs (bibsleuth existence check)
-- **Agent 2**: Run latex-cleanup skill on the `.tex` file
-- **Agent 3**: Run `make` in the paper directory if Makefile exists
-- **Agent 4**: Figure format check — scan all `\includegraphics` paths and flag bitmap formats (PNG, JPG, TIFF, BMP)
-- **Agent 5**: Front matter review — read the paper and extract affiliations, acknowledgements (grants + people thanked), and code/data availability statements for the user to verify
+Extract enough information for the user to verify:
 
-### 3. Present unified report
+- Every author and affiliation. Flag missing affiliations and apparently incomplete department, institution, or country information.
+- The acknowledgements, including every funding source, grant number, and named person thanked. Flag a missing acknowledgements section.
+- Code and data availability statements. Flag a missing statement as a blocker only when the target venue requires one; otherwise report it as a warning.
 
-Organize findings by severity:
+## Report
 
-**Blockers** (must fix):
-- Missing figures
-- Undefined references/citations
-- Compilation errors
-- Retracted citations
-- Bitmap figures (PNG, JPG, TIFF, BMP) — should be vector (PDF, EPS) unless intentionally raster (photos, screenshots)
-- Missing code/data availability statement (if journal requires it)
+Return one concise report organized by severity:
 
-**Warnings** (should fix):
-- Unverified references
-- Draft artifacts (TODOs, commented-out text)
-- `draft` mode still enabled
-- Overfull hboxes
-- Missing or incomplete affiliations
+1. Blockers: compilation errors, missing figures, undefined references or citations, retracted citations, raster-only plots or line art, and missing venue-required availability statements.
+2. Warnings: unverified references, draft artifacts, consequential overfull boxes, incomplete affiliations, material figure-quality findings, and other likely submission problems.
+3. User verification: list the extracted affiliations, acknowledgements, funding details, and availability statements for completeness checks.
+4. Suggestions: missing DOI or URL metadata and non-blocking typography or style improvements.
 
-**For user to verify** (cannot be auto-checked):
-- Affiliations — list all authors + affiliations for the user to eyeball
-- Acknowledgements — list all grants and people thanked so the user can confirm completeness
-- Code/data availability — show the statement for the user to review
-
-**Suggestions** (nice to fix):
-- Missing DOIs/URLs in `.bib`
-- LaTeX style issues
-- Spacing/typography
-
-### 5. Offer to fix
-
-For each category, offer to fix what can be automated:
-- Apply `.bib` patches (DOIs, URLs)
-- Remove draft artifacts
-- Fix spacing issues
-- Ask before each category of changes
-
-### 6. Offer content review
-
-After presenting the report and addressing formatting/technical issues, offer:
-"Want me to run `/critique-manuscript` to check for content-level weaknesses reviewers might flag?"
-
-This is a deeper, separate pass that evaluates the paper's substance (literature, methodology, claims, etc.) rather than its formatting and technical correctness.
-
-## Rules
-
-- Run all checks even if one fails — present a complete picture
-- Clearly separate blockers from suggestions — don't alarm about minor issues
-- Don't modify files without asking
-- If the paper doesn't compile, still run the other checks
-- Keep the final report concise — group similar issues rather than listing every overfull hbox
+Give file and line references or log excerpts for each actionable finding. Group repeated warnings and state which checks could not be completed. Do not modify files unless the user approves a separate fix pass. Use `critique-manuscript` only when the user also requests a content-level review.
