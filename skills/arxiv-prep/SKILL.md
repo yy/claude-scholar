@@ -1,160 +1,65 @@
 ---
 name: arxiv-prep
 user_invocable: true
-description: Prepare an arXiv submission package from a LaTeX paper. Cleans the source, builds a tarball, and extracts metadata for the submission form. Use before uploading to arXiv.
+description: Prepare a LaTeX paper's source package and metadata for arXiv. Use when the user is ready to upload a paper or wants an arXiv-compatible staging copy, archive, and compilation check.
 ---
 
-# arxiv-prep — arXiv Submission Preparation
+# Prepare an arXiv submission
 
-Automate the tedious steps of preparing a LaTeX paper for arXiv upload. Creates a clean copy, removes cruft, verifies compilation, and produces a ready-to-upload tarball.
+Create a clean staging copy, verify that it compiles independently, and package it for upload. Never modify the original paper directory.
 
-## When to Use
+Treat this as packaging work. Run `presubmit-checks` only when the user also requests a readiness review.
 
-- "prep for arxiv", "make an arxiv package", "I need to upload this to arxiv"
-- After the paper is finalized and ready for submission
-- Complements `presubmit-checks` (content quality) — this skill handles packaging
+## Establish the source tree
 
-## Workflow
+Use the manuscript path supplied by the user. Otherwise, infer the main file from project configuration, build files, and the TeX document tree. Determine the compiler, bibliography backend, included files, figures, custom packages, and generated files required for a successful build.
 
-### Phase 1: Pre-clean (judgment calls)
+Identify supplements and ask only when their role is ambiguous. Keep material that belongs in the article's PDF within the TeX tree. Put supporting code, data, movies, or other non-article material in `anc/` only when the user wants it submitted as ancillary material.
 
-#### 1. Find the paper
+Check current arXiv guidance before relying on version-specific processor behavior or limits:
 
-Same search logic as presubmit-checks:
-1. User-provided path
-2. `paper/current/main.tex`
-3. `paper/main.tex`
-4. `main.tex`
-5. Glob for `**/*.tex` with `\begin{document}`
+- [TeX submissions](https://info.arxiv.org/help/submit_tex.html)
+- [TeX Live at arXiv](https://info.arxiv.org/help/faq/texlive.html)
+- [Archive creation](https://info.arxiv.org/help/tar.html)
+- [Metadata fields](https://info.arxiv.org/help/prep.html)
+- [Oversized submissions](https://info.arxiv.org/help/sizes.html)
 
-Identify the **paper directory** (parent of the main `.tex` file). All subsequent operations are relative to this directory.
+## Create the staging copy
 
-#### 2. Optionally run presubmit-checks
+Create a sibling staging directory such as `<paper-dir>_arXiv`. If it already exists, stop and ask before replacing or modifying it.
 
-Ask the user: "Want me to run the presubmit-checks first?" Skip if they say they already did.
+Copy only what the submission needs:
 
-#### 3. Check for supplements
+- The top-level and included TeX sources, figures, and data read during compilation.
+- Custom `.cls`, `.sty`, `.bst`, font, or macro files unavailable in arXiv's selected TeX Live environment.
+- Either all required `.bib` files or a pre-generated `.bbl` whose basename matches the top-level TeX file. Preserve the backend and version compatibility expected by `biblatex` or Biber.
+- Pre-generated `.ind`, `.gls`, or `.nls` files when the document uses an index, glossary, or nomenclature.
+- User-approved ancillary files under `anc/`; do not place TeX article sources there.
 
-Scan for separate supplement/appendix `.tex` files (e.g., `supp.tex`, `appendix.tex`, `si.tex`). If found, ask the user whether to:
-- **Merge** into the main file via `\appendix` (arXiv prefers single-PDF submissions)
-- **Keep separate** (will be included as ancillary files)
+Exclude version-control data, editor backups, referee correspondence, unused figures, unrelated source files, secrets, the compiled manuscript PDF, logs, and auxiliary files. Preserve required PDF figures and the generated bibliography and index-like files listed above.
 
-#### 4. Review style files
+Review the staged sources and embedded file metadata for private comments, credentials, absolute local paths, TODOs, and author-only notes. arXiv publishes submitted source files. Flag ambiguous material instead of deleting it automatically.
 
-Grep for journal-specific language that should be removed for arXiv:
-- "Submitted to", "Under review at", "Accepted by"
-- Journal-specific class options (e.g., `review`, `preprint` mode toggles)
-- Copyright/license statements that conflict with arXiv's license
+Flag journal-only wording, referee mode, and incompatible copyright notices for the user. Do not rewrite them or change the license without approval.
 
-Flag these and ask before changing.
+### Keep the package small
 
-### Phase 2: Automated cleaning
+Measure the total uncompressed size and each individual file. arXiv currently flags either one above 50 MiB as oversized and may hold the submission for review. Keep avoidable excess below that guideline; if the scientific content requires more, report it rather than silently degrading the paper.
 
-#### 5. Optimize bibliography
+When the package is large, identify the largest files and remove unused material first. Optimize pixel-native images for their final display size without visible degradation. Preserve native vector plots, diagrams, text, and line art. Use `critique-figures` before making uncertain format or resolution changes. Do not rewrite bibliographies or blindly compress PDFs to save space.
 
-Run `bib_optimizer` to remove unused citations and reorder entries to match their order of appearance in the text:
+## Verify the staged build
 
-```bash
-uvx bib_optimizer bibopt <main.tex> <references.bib> <references_cleaned.bib>
-```
+Build from the staging directory root with the processor intended for arXiv. Use the project's build command when it reproduces that processor; otherwise use an appropriate `latexmk` invocation. Let the build tool run enough passes rather than prescribing a fixed pass count.
 
-- If the paper has a **supplement with its own `.bib`** (e.g., `si.tex`/`supp.tex` using `si_references.bib`), run `bibopt` separately for each:
-  ```bash
-  uvx bib_optimizer bibopt <si.tex> <si_references.bib> <si_references_cleaned.bib>
-  ```
-- If the supplement **shares the main `.bib`**, run `bibopt` on each `.tex` file separately against the same `.bib`, then merge the two outputs (concatenate and deduplicate entries by cite key):
-  ```bash
-  uvx bib_optimizer bibopt <main.tex> <references.bib> <references_main.bib>
-  uvx bib_optimizer bibopt <si.tex> <references.bib> <references_si.bib>
-  ```
-  Then merge with `bibtool` (deduplicates by cite key):
-  ```bash
-  bibtool -d references_main.bib references_si.bib -o references_cleaned.bib
-  ```
-  If `bibtool` is not available, concatenate both files and manually remove any duplicate `@type{key,` entries (keep the first occurrence).
-- Update the `\bibliography{...}` command in each `.tex` file to point to the cleaned file.
-- The original `.bib` is never modified.
+Treat compilation errors, missing files, undefined citations, and undefined references as blockers. Check for case-sensitive path mismatches and dependencies that resolve only through the original directory. Compare the staged PDF with the original build, including page count, figures, bibliography, and supplements.
 
-If `bib_optimizer` is not available, skip this step — the `.bib` will still be handled in step 7.
+A successful local build does not replace inspection of arXiv's generated preview. Tell the user to verify the detected processor, top-level file, compilation log, and final PDF during upload.
 
-#### 6. Run arxiv-latex-cleaner
+## Prepare metadata and archive
 
-```bash
-uvx arxiv-latex-cleaner <paper-dir> --resize_images --im_size 500 --compress_pdf
-```
+Extract copy-ready title, authors, abstract, and comments from the manuscript. Remove layout commands and expand private macros, but preserve scientific notation and TeX accents accepted by arXiv. Report categories, report numbers, journal references, DOIs, and license as user decisions rather than guessing them.
 
-This creates a `<paper-dir>_arXiv/` directory with a cleaned copy. The original is untouched. The `--compress_pdf` flag reduces embedded PDF figure sizes, helping stay under arXiv's 50 MB limit.
+Create a `.tar.gz` or `.zip` containing the staging directory's contents, not the directory itself. Inspect the archive listing and report its path, size, file count, top-level TeX file, processor, and build status.
 
-If `arxiv-latex-cleaner` is not available, fall back to manual cleaning:
-- Copy the paper directory
-- Remove `.git/`, `__pycache__/`, `.DS_Store`
-- Remove commented-out text blocks (lines starting with `%` that aren't TeX directives)
-- Remove unused `.tex` files not referenced by `\input` or `\include`
-
-#### 7. Post-cleaner fixes in `_arXiv/`
-
-Apply these fixes to the cleaned copy:
-
-- **4-pass trick**: Add `\typeout{get arXiv to do 4 passes}` on the line after `\end{document}` — this ensures arXiv runs enough LaTeX passes to resolve all references
-- **Ensure `.bbl` exists**: Check if a `.bbl` file exists. If not, compile with `pdflatex` + `bibtex`/`biber` to generate it. arXiv needs the `.bbl`, not the `.bib`
-- **Ask before deleting `.bib`**: If `.bbl` exists, ask the user whether to remove `.bib` files (reduces package size; arXiv uses `.bbl` directly)
-- **Clean aux files**: Remove `.aux`, `.log`, `.out`, `.blg`, `.fls`, `.fdb_latexmk`, `.synctex.gz`, `.toc`, `.lof`, `.lot`, `.nav`, `.snm`, `.vrb`. Do **not** use `latexmk -CA` here — it also removes `.bbl`, which arXiv needs
-- **Remove `.git/`** if it exists in the copy
-
-### Phase 3: Verify & package
-
-#### 8. Test compilation
-
-Run in the `_arXiv/` directory:
-
-```bash
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
-```
-
-(Three passes to resolve references.) Report:
-- **Errors**: any lines with `!` — these are blockers
-- **Warnings**: undefined references, missing citations, overfull hboxes
-- If compilation fails, report the error but continue to the next steps
-
-#### 9. Extract clean metadata
-
-Parse the `.tex` file to extract metadata for copy-paste into the arXiv submission form:
-- **Title**: from `\title{...}` — strip LaTeX commands, math mode, line breaks
-- **Abstract**: from `\begin{abstract}...\end{abstract}` — strip LaTeX commands
-- **Authors**: from `\author{...}` — extract names, strip affiliations/footnotes
-- **Comments**: suggest standard format. If the paper has supplementary material, use: "Main text: X pages, X figures. Supplementary Information: X pages, X figures". Otherwise: "X pages, X figures"
-
-Present this in a clean, copy-pasteable format.
-
-#### 10. Create tarball
-
-```bash
-cd <paper-dir>_arXiv && tar -cvf ../arxiv-submission.tar *
-```
-
-- Warn if the tarball exceeds 50 MB (arXiv's limit is ~50 MB for source)
-- Report the file count and size
-- Note: arXiv also accepts `.tar.gz` — use gzip if close to the limit
-
-#### 11. Final summary
-
-Present:
-- Package location and size
-- Clean metadata (title, abstract, authors, comments)
-- Compilation status (clean / warnings / errors)
-- Remaining manual steps:
-  - Upload `arxiv-submission.tar` at https://arxiv.org/submit
-  - Select primary subject area and cross-list categories
-  - Paste metadata into the form
-  - Set license (usually CC BY 4.0 or arXiv perpetual non-exclusive)
-  - Share the submission password with co-authors
-
-## Rules
-
-- **Never modify the original paper directory** — all changes happen in the `_arXiv/` copy
-- Ask before destructive operations (deleting `.bib`, merging supplements)
-- If any step fails, continue with the remaining steps and report all issues at the end
-- Keep the final summary concise and actionable
-
+Do not call the package ready when a blocker remains. In the handoff, list unresolved warnings and the remaining upload decisions, especially category and license.
